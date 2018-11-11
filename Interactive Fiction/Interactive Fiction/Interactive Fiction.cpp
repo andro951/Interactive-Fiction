@@ -5,7 +5,7 @@ using namespace std;
 
 void displayIntroduction();
 void displayTime();
-string getUserCommandAndObject(string prompt);
+string getUserCommandAndObject(string prompt, string& command, string& object);
 void didntRecognizeCommand(string command);
 
 int time = 690; //The start time of the game in minutes where 0 is midnight.
@@ -23,7 +23,9 @@ int main()
 
 	displayIntroduction();
 	displayTime();
-	string command, object = getUserCommandAndObject("What will you do next?\n");
+	string command;
+	string object;
+	getUserCommandAndObject("What will you do next?\n", command, object);
 	//game loop
 	bool gameOver = false;
 	while (time < 730 and gameOver != true)
@@ -415,7 +417,7 @@ int main()
 		if (gameOver != true)
 		{
 			displayTime();
-			getUserCommandAndObject("What will you do next?\n");
+			getUserCommandAndObject("What will you do next?\n", command, object);
 		}
 	}
 	if (gameOver != true)
@@ -463,23 +465,30 @@ void displayTime()
 	}
 }
 
-string getUserCommandAndObject(string prompt)
+string getUserCommandAndObject(string prompt, string& command, string& object)
 {
 	string userText = "";
 	cout << prompt;
-	cin >> userText;
-	for (int i = 0; userText.length(); i++)
+	getline (cin, userText, '\n');
+	//int k = userText.length(); //Prevents an error when changing the userText withing the for loop when userText.length() is the number of times the for loop runs.
+	for (int i = 0; i < userText.length(); i++)
 	{
 		userText[i] = tolower(userText[i]);
 	}
-	string command = "";
-	string object = "";
+	//int i = 0;
+	//while (i < k)
+	//{
+	//	userText[i] = tolower(userText[i]);
+	//	i++;
+	//}
+	command = "";
+	object = "";
 	string backwardsObject = "";
 	bool determinedObject = false;
 	int determinedObjectAt;
 	string blank = " ";
 	//The user is asked to input a command followed by an assosiated object.  The user is told that the object can only be one word.  This for loop creates string object and string command from string userText.
-	for (int i = userText.length() - 1; userText.length(); i--)
+	for (int i = userText.length() - 1; i > -1; i--)
 	{
 		if (userText[i] == blank[0] && determinedObject != true) //2nd Once you reach a space, the object has been determined.  Stop adding characters to backwardsObject.
 		{
@@ -488,13 +497,13 @@ string getUserCommandAndObject(string prompt)
 		}
 		else if (determinedObject == true) //3rd 
 		{
-			for (int i = backwardsObject.length() - 1; backwardsObject.length(); i--) //use backwardsObject to make object.
+			for (int k = backwardsObject.length() -1; k > -1; k--) //use backwardsObject to make object.
 			{
-				object += backwardsObject[i];
+				object += backwardsObject[k];
 			}
-			for (int i = 0; determinedObjectAt; i++) //The rest of userText is used to make command.
+			for (int j = 0; j < determinedObjectAt; j++) //The rest of userText is used to make command.
 			{
-				command[i] = userText[i];
+				command += userText[j];
 			}
 				return command, object; //return is used here because the purpose of the for loop is to determine where the object stops and the command starts.  It is not necesary to iterate through the entire userText.
 		}
