@@ -20,12 +20,14 @@ int main()
 	bool carryingRadiator = false;
 	bool carryingHandcuffs = false;
 	bool carryingHandgun = false;
+	bool called911 = false;
+	int timeCalledPolice = 32767;
 
 	displayIntroduction();
 	displayTime();
 	string command;
 	string object;
-	getUserCommandAndObject("What will you do next?\n", command, object);
+	getUserCommandAndObject("What will you do?\n", command, object);
 	//game loop
 	bool gameOver = false;
 	while (time < 730 and gameOver != true)
@@ -78,6 +80,7 @@ int main()
 					cout << "You pick up the radiator.\n";
 					time += 1;
 					emptyHands = 0;
+					carryingRadiator = true;
 				}
 			}
 			else if (command == "drop" || command == "put down")
@@ -114,6 +117,7 @@ int main()
 				if (handcuffed)
 				{
 					cout << "The handcuffs are still attatched to your hands.  You are unable to pick them up.\n";
+					time += 1;
 				}
 				else
 				{
@@ -209,11 +213,13 @@ int main()
 					if (bagSearched)
 					{
 						cout << "There is nothing else of note in the bag.\n";
+						time += 1;
 					}
 					else
 					{
 						cout << "The bag contains a gun and a handcuff key.\n";
 						bagSearched = true;
+						time += 1;
 					}
 				}
 				else if (command == "list commands for" || command == "list commands" || command == "commands for" || command == "commands")
@@ -287,7 +293,36 @@ int main()
 				}
 				else if (command == "use" || command == "call")
 				{
-					cout << "Would you like to call 911 or the front desk?\n";
+					bool waitingForValidInput = true;
+					while (waitingForValidInput) //Repeats until a valid input is entered.
+					{
+						cout << "Would you like to call 911 or the front desk? (type 911 or front desk)\n";
+						string userAnswer; //Stores the user's answer to the above question.
+						cin >> userAnswer;
+						// If the user wants to call 911, they will win in 20 minutes if time doesn't run out.
+						if (userAnswer == "911") //If yes is entered, repeat the Program loop.
+						{
+							//     Move program execution back up to // Display the simulation # is staring to the recruit. 
+							called911 = true;
+							waitingForValidInput = false;
+							cout << "You inform the police of your situation and hang up the phone.\n";
+							timeCalledPolice = time;
+							time += 5;
+
+						}
+						// Otherwise 
+						else if (userAnswer == "front desk") //If no is entered, end the Program loop and exit the program.
+						{
+							cout << "You inform the front desk of your situation and hang up the phone.\n"
+								<< "The front desk clerk informs you that they will be right up to help.\n";
+							time = 730;
+							waitingForValidInput = false;
+						}
+						else //If anything other than yes or no is entered, repeat the waitingForValidInput loop.
+						{
+							cout << "\nInvalid input.\n\n";
+						}
+					}
 				}
 				else if (command == "list commands for" || command == "list commands" || command == "commands for" || command == "commands")
 				{
@@ -355,31 +390,6 @@ int main()
 
 			}
 		}
-		else if (object == "")
-		{
-			if (command == "examine" || command == "look at" || command == "view")
-			{
-				cout << ".\n";
-				time += 1;
-			}
-			else if (command == "pick up" || command == "take")
-			{
-
-			}
-			else if (command == "drop" || command == "put down")
-			{
-
-			}
-			else if (command == "list commands for" || command == "list commands" || command == "commands for" || command == "commands")
-			{
-				cout << "Available commands for : examine, pick up, drop\n";
-			}
-			else
-			{
-				didntRecognizeCommand(command);
-			}
-
-		}
 		else if (object == "objects")
 		{
 			if (command == "list" || command == "list of")
@@ -407,6 +417,38 @@ int main()
 			cout << "You paitiently wait a few minutes.";
 			time += 5;
 		}
+		else if (object == "help")
+		{
+			cout << "To interact with the objects in the room, enter the command for that object followed by the object. (command object)\n"
+				<< "To see all objects currently available to you, type \"list objects\".\n"
+				<< "To see the commands for an object, type \"commands for \" followed by the objects name.  For example, \"commands for room\".\n"
+				<< "Type \"wait\" to wait 5 minutes.\n";
+		}
+		else if (object == "")
+		{
+			if (command == "examine" || command == "look at" || command == "view")
+			{
+				cout << ".\n";
+				time += 1;
+			}
+			else if (command == "pick up" || command == "take")
+			{
+
+			}
+			else if (command == "drop" || command == "put down")
+			{
+
+			}
+			else if (command == "list commands for" || command == "list commands" || command == "commands for" || command == "commands")
+			{
+				cout << "Available commands for : examine, pick up, drop\n";
+			}
+			else
+			{
+				didntRecognizeCommand(command);
+			}
+
+		}
 		else
 		{
 			cout << "Didn't regognize the object, " << object << ".";
@@ -420,23 +462,63 @@ int main()
 			getUserCommandAndObject("What will you do next?\n", command, object);
 		}
 	}
+	if (timeCalledPolice <= 710)
+	{
+		gameOver = true;
+		cout << "The police arive and escort you home.\n";
+	}
 	if (gameOver != true)
 	{
 		cout << "A tall figure enters the dark room.\n";
 		if (carryingHandgun)
 		{
 			//Ask if they will shoot.  If so, they go to prison for shooting a cleaning lady.  Otherwise they are killed.
+			bool waitingForValidInput = true;
+			while (waitingForValidInput) //Repeats until a valid input is entered.
+			{
+				// Ask the recruit if they would like to run the simulation again
+				cout << "Will you shoot? (type yes or no)\n";
+				string userAnswer; //Stores the user's answer to the above question.
+				cin >> userAnswer;
+				// If the recruit wants to run the simulation again
+				if (userAnswer == "yes" || userAnswer == "Yes" || userAnswer == "YES") //If yes is entered, repeat the Program loop.
+				{
+					//     Move program execution back up to // Display the simulation # is staring to the recruit. 
+					cout << "BANG!....The figure drops to the floor in a pool of blood.\n"
+						<< "You rush out of the room.  Who did I just shoot?\n"
+						<< "Later that week, you are arrested for murder.\n\n";
+					waitingForValidInput = false;
+				}
+				// Otherwise 
+				else if (userAnswer == "no" || userAnswer == "No" || userAnswer == "NO") //If no is entered, end the Program loop and exit the program.
+				{
+					waitingForValidInput = false;
+				}
+				else //If anything other than yes or no is entered, repeat the waitingForValidInput loop.
+				{
+					cout << "\nInvalid input.\n\n";
+				}
+			}
 		}
+		cout << "You loose.\n";
 	}
-	else
-	{
-		cout << "Game over.  You loose.";
-	}
+	system("pause");
 }
 
 void displayIntroduction()
 {
-	cout << "Your only hint is to do things as you would actually do them.\n";
+	cout<< "You wake up in a dark room.\n"
+		<< "You aren't sure where you are or how you got there.\n"
+		<< "You soon realize that you are in a hotel room.\n"
+		<< "You try to get up, but your hands are handcuffed to the radiator.\n\n\n"
+
+
+		<< "To interact with the objects in the room, enter the command for that object followed by the object. (command object)\n"
+		<< "To see all objects currently available to you, type \"list objects\".\n"
+		<< "To see the commands for an object, type \"commands for \" followed by the objects name.  For example, \"commands for room\".\n"
+		<< "Type \"wait\" to wait 5 minutes.\n"
+		<< "Type \"help\" to redisplay this information.\n\n"
+		<< "Your only hint is to do things as you would actually do them.\n";
 }
 
 void displayTime()
