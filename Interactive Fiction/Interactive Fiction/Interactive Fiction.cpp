@@ -207,9 +207,7 @@ int main()
 				didntRecognizeCommand(command);
 			}
 		}
-		else if (roomExamined) //If the radiator has been disconnected and the room has been examined, they player has acces to the rest of the objects in the room.
-		{
-			if (object == "bag")
+		else if (object == "bag" && roomExamined)
 			{
 				if (command == "examine" || command == "look at" || command == "view")
 				{
@@ -235,9 +233,7 @@ int main()
 				}
 
 			}
-			else if (bagSearched) //Only allow access to the handgun if the bag has been searched.  (The handgun is in the bag.)
-			{
-				if (object == "handgun")
+		else if (object == "handgun" && bagSearched)
 				{
 					if (command == "examine" || command == "look at" || command == "view")
 					{
@@ -289,8 +285,7 @@ int main()
 					}
 
 				}
-			}
-			else if (object == "phone")
+		else if (object == "phone" && roomExamined)
 			{
 				if (command == "examine" || command == "look at" || command == "view")
 				{
@@ -338,7 +333,7 @@ int main()
 				}
 
 			}
-			else if (object == "door")
+		else if (object == "door" && roomExamined)
 			{
 				if (command == "examine" || command == "look at" || command == "view")
 				{
@@ -368,8 +363,8 @@ int main()
 				}
 
 			}
-			//This is a placeholder for adding new objects into the game.
-			else if (object == "")
+		//This is a placeholder for adding new objects into the game.
+		else if (object == "" && roomExamined)
 			{
 				if (command == "examine" || command == "look at" || command == "view")
 				{
@@ -394,7 +389,6 @@ int main()
 				}
 
 			}
-		}
 		else if (object == "objects")
 		{
 			if (command == "list" || command == "list of")
